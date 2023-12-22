@@ -22,6 +22,7 @@ use std::cell;
 use std::io;
 use std::ops;
 use std::rc;
+use printpdf::{ImageRotation, ImageTransform};
 
 use crate::error::{Context as _, Error, ErrorKind};
 use crate::fonts;
@@ -332,12 +333,19 @@ impl<'p> Layer<'p> {
         let position = self.transform_position(position);
         dynamic_image.add_to_layer(
             self.data.layer.clone(),
-            Some(position.x.into()),
-            Some(position.y.into()),
-            rotation.into(),
-            Some(scale.x),
-            Some(scale.y),
-            dpi,
+            ImageTransform {
+                translate_x: Some(position.x.into()),
+                translate_y: Some(position.y.into()),
+                rotate: Some(ImageRotation {
+                    angle_ccw_degrees: rotation.degrees as f32,
+                    rotation_center_x: Default::default(),
+                    rotation_center_y: Default::default(),
+                }),
+                scale_x: Some(scale.x as f32),
+                scale_y: Some(scale.y as f32),
+                dpi: dpi.map(|x| x as f32),
+            }
+
         );
     }
 

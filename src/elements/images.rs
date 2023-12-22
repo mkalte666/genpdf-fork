@@ -8,7 +8,7 @@ use std::path;
 
 use image::GenericImageView;
 
-use crate::error::{Context as _, Error, ErrorKind};
+use crate::error::{Context as _, Error};
 use crate::{render, style};
 use crate::{Alignment, Context, Element, Mm, Position, RenderResult, Rotation, Scale, Size};
 
