@@ -19,10 +19,11 @@
 //! [`TextSection`]: struct.TextSection.html
 
 use std::cell;
+use std::convert::TryInto;
 use std::io;
 use std::ops;
 use std::rc;
-use printpdf::{ImageRotation, ImageTransform};
+use printpdf::{ColorSpace, ImageRotation, ImageTransform, ImageXObject};
 
 use crate::error::{Context as _, Error, ErrorKind};
 use crate::fonts;
@@ -329,7 +330,7 @@ impl<'p> Layer<'p> {
         rotation: Rotation,
         dpi: Option<f64>,
     ) {
-        let dynamic_image = printpdf::Image::from_dynamic_image(image);
+        let dynamic_image = remove_alpha_channel_from_image(printpdf::Image::from_dynamic_image(image));
         let position = self.transform_position(position);
         dynamic_image.add_to_layer(
             self.data.layer.clone(),
@@ -773,5 +774,53 @@ fn encode_win1252(s: &str) -> Result<Vec<u16>, Error> {
         ))
     } else {
         Ok(bytes)
+    }
+}
+
+/// something like a fix for the image transparency issue
+/// taken from https://github.com/fschutt/printpdf/issues/119
+#[cfg(feature = "images")]
+pub fn remove_alpha_channel_from_image_x_object(image_x_object: ImageXObject) -> ImageXObject {
+    if !matches!(image_x_object.color_space, ColorSpace::Rgba) {
+        return image_x_object;
+    };
+    let ImageXObject {
+        color_space,
+        image_data,
+        ..
+    } = image_x_object;
+
+    let new_image_data = image_data
+        .chunks(4)
+        .map(|rgba| {
+            let [red, green, blue, alpha]: [u8; 4] = rgba.try_into().ok().unwrap();
+            let alpha = alpha as f64 / 255.0;
+            let new_red = ((1.0 - alpha) * 255.0 + alpha * red as f64) as u8;
+            let new_green = ((1.0 - alpha) * 255.0 + alpha * green as f64) as u8;
+            let new_blue = ((1.0 - alpha) * 255.0 + alpha * blue as f64) as u8;
+            return [new_red, new_green, new_blue];
+        })
+        .collect::<Vec<[u8; 3]>>()
+        .concat();
+
+    let new_color_space = match color_space {
+        ColorSpace::Rgba => ColorSpace::Rgb,
+        ColorSpace::GreyscaleAlpha => ColorSpace::Greyscale,
+        other_type => other_type,
+    };
+
+    ImageXObject {
+        color_space: new_color_space,
+        image_data: new_image_data,
+        ..image_x_object
+    }
+}
+
+/// Convenience wrapper around remove_alpha_channel_from_image_x_object
+#[cfg(feature = "images")]
+pub fn remove_alpha_channel_from_image(image: printpdf::Image) -> printpdf::Image
+{
+    printpdf::Image {
+        image: remove_alpha_channel_from_image_x_object(image.image)
     }
 }

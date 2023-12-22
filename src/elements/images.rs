@@ -67,14 +67,16 @@ pub struct Image {
 impl Image {
     /// Creates a new image from an already loaded image.
     pub fn from_dynamic_image(data: image::DynamicImage) -> Result<Self, Error> {
-        Ok(Image {
+
+        let img = Image {
             data,
             alignment: Alignment::default(),
             position: None,
             scale: Scale::default(),
             rotation: Rotation::default(),
             dpi: None,
-        })
+        };
+        Ok(img)
     }
 
     fn from_image_reader<R>(reader: image::io::Reader<R>) -> Result<Self, Error>
