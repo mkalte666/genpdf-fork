@@ -3,8 +3,8 @@
 
 [package]
 name = "genpdf"
-version = "0.2.0"
-authors = ["Robin Krahl <robin.krahl@ireas.org>"]
+version = "0.3.0"
+authors = ["Robin Krahl <robin.krahl@ireas.org>", "Malte Kießling <mkalte@mkalte.me>"]
 edition = "2018"
 description = "User-friendly PDF generator written in pure Rust"
 homepage = "https://sr.ht/~ireas/genpdf-rs"
