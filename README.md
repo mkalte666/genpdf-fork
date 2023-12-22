@@ -3,9 +3,12 @@ Copyright (C) 2020 Robin Krahl <robin.krahl@ireas.org>
 SPDX-License-Identifier: CC0-1.0
 -->
 
-# genpdf-rs
+# genpdf-fork (genpdf-rs)
 
 A user-friendly PDF generator written in pure Rust.
+
+Forked on 2023-12-22 cause i wanted transparency. 
+
 
 [Documentation](https://docs.rs/genpdf)
 

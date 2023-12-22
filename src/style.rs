@@ -61,20 +61,20 @@ impl From<Color> for printpdf::Color {
     fn from(color: Color) -> printpdf::Color {
         match color {
             Color::Rgb(r, g, b) => printpdf::Color::Rgb(printpdf::Rgb::new(
-                f64::from(r) / 255.0,
-                f64::from(g) / 255.0,
-                f64::from(b) / 255.0,
+                f32::from(r) / 255.0,
+                f32::from(g) / 255.0,
+                f32::from(b) / 255.0,
                 None,
             )),
             Color::Cmyk(c, m, y, k) => printpdf::Color::Cmyk(printpdf::Cmyk::new(
-                f64::from(c) / 255.0,
-                f64::from(m) / 255.0,
-                f64::from(y) / 255.0,
-                f64::from(k) / 255.0,
+                f32::from(c) / 255.0,
+                f32::from(m) / 255.0,
+                f32::from(y) / 255.0,
+                f32::from(k) / 255.0,
                 None,
             )),
             Color::Greyscale(val) => {
-                printpdf::Color::Greyscale(printpdf::Greyscale::new(f64::from(val) / 255.0, None))
+                printpdf::Color::Greyscale(printpdf::Greyscale::new(f32::from(val) / 255.0, None))
             }
         }
     }

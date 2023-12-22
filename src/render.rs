@@ -352,11 +352,8 @@ impl<'p> Layer<'p> {
         let line = printpdf::Line {
             points: line_points,
             is_closed: false,
-            has_fill: false,
-            has_stroke: true,
-            is_clipping_path: false,
         };
-        self.data.layer.add_shape(line);
+        self.data.layer.add_line(line);
     }
 
     fn set_fill_color(&self, color: Option<Color>) {
@@ -401,7 +398,7 @@ impl<'p> Layer<'p> {
     }
 
     fn set_line_height(&self, line_height: Mm) {
-        self.data.layer.set_line_height(line_height.0);
+        self.data.layer.set_line_height(line_height.0 as f32);
     }
 
     fn set_font(&self, font: &printpdf::IndirectFontRef, font_size: u8) {

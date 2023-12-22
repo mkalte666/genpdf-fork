@@ -253,7 +253,7 @@ impl From<f32> for Mm {
 
 impl From<printpdf::Mm> for Mm {
     fn from(mm: printpdf::Mm) -> Mm {
-        Mm(mm.0)
+        Mm(mm.0.into())
     }
 }
 
@@ -266,13 +266,13 @@ impl From<printpdf::Pt> for Mm {
 
 impl From<Mm> for printpdf::Mm {
     fn from(mm: Mm) -> printpdf::Mm {
-        printpdf::Mm(mm.0)
+        printpdf::Mm(mm.0 as f32)
     }
 }
 
 impl From<Mm> for printpdf::Pt {
     fn from(mm: Mm) -> printpdf::Pt {
-        printpdf::Mm(mm.0).into()
+        printpdf::Mm(mm.0 as f32).into()
     }
 }
 
